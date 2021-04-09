@@ -1,23 +1,30 @@
-sudo: required
-language: generic
+# want to run as sudo
+sudo: required 
 
+language: generic 
+
+# we need docker CLI installed
 services:
   - docker
 
+# what we need before we run our tests
+# we want to build it
 before_install:
-  - docker build -t stephengrider/docker-react -f Dockerfile.dev .
+  - docker build -t mbans/docker-react -f Dockerfile.dev .
 
+# this is the commands required to run our test suite
+# this ensures that the npm run test returns when finished
 script:
-  - docker run -e CI=true stephengrider/docker-react npm run test
+  - docker run -e CI=true mbans/docker-react npm run test -- --coverage
 
-deploy:
+deploy: 
   provider: elasticbeanstalk
-  region: 'us-east-1'
-  app: 'docker'
-  env: 'docker-env'
-  bucket_name: 'elasticbeanstalk-us-east-1-923445559289'
-  bucket_path: 'docker'
+  region: "us-east-2"
+  app: docker-react
+  env: "Dockerreact-env"
+  bucket_name: "elasticbeanstalk-us-east-2-521540694679"
+  bucket_path: "docker-react"
   on:
     branch: master
   access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+  secret_access_key: "$AWS_SECRET_KEY"
